@@ -1,840 +1,1661 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python Задачи — justLearn.</title>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI',sans-serif; background:#f5f7fa; color:#1a1a2e; min-height:100vh; }
-
-header { background:#2f80ed; color:white; padding:20px 28px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(47,128,237,.3); }
-header h1 { font-size:20px; font-weight:700; }
-header span { font-size:13px; opacity:.85; }
-
-.score-bar { background:white; border-bottom:1px solid #e0e0e0; padding:10px 28px; display:flex; align-items:center; gap:20px; font-size:14px; color:#555; flex-wrap:wrap; }
-.score-bar strong { color:#2f80ed; font-size:18px; }
-.progress-wrap { flex:1; min-width:160px; height:8px; background:#e8ecf0; border-radius:4px; overflow:hidden; }
-.progress-fill { height:100%; background:linear-gradient(90deg,#2f80ed,#43a047); border-radius:4px; transition:width .4s; }
-
-.tabs { display:flex; gap:6px; padding:20px 28px 0; flex-wrap:wrap; }
-.tab { padding:7px 16px; border-radius:20px; border:2px solid #e0e0e0; background:white; cursor:pointer; font-size:13px; font-weight:600; color:#888; transition:all .2s; }
-.tab.active,.tab:hover { background:#2f80ed; color:white; border-color:#2f80ed; }
-
-.section { display:none; padding:20px 28px 60px; max-width:860px; }
-.section.active { display:block; }
-.section-title { font-size:19px; font-weight:700; color:#2f80ed; margin-bottom:4px; }
-.section-sub { font-size:13px; color:#888; margin-bottom:20px; }
-
-.card { background:white; border-radius:14px; padding:20px; margin-bottom:14px; border:1px solid #e8ecf0; box-shadow:0 2px 8px rgba(0,0,0,.04); transition:box-shadow .2s; }
-.card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08); }
-.card.completed { border-color:#43a047; background:#f9fff9; }
-
-.card-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.num { width:32px; height:32px; border-radius:50%; background:#2f80ed; color:white; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.card-title { font-weight:700; font-size:15px; }
-.stars { color:#f0c040; font-size:13px; margin-left:auto; }
-
-.tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:12px; font-weight:600; margin-bottom:8px; }
-.tag.easy   { background:#e8f5e9; color:#2e7d32; }
-.tag.medium { background:#fff3e0; color:#e65100; }
-.tag.hard   { background:#fce4ec; color:#c62828; }
-
-.desc { font-size:14.5px; line-height:1.7; color:#333; }
-.desc p { margin-bottom:7px; }
-
-.example { background:#f4f4f4; border-radius:8px; padding:9px 13px; font-family:'Courier New',monospace; font-size:12.5px; color:#333; margin-top:8px; white-space:pre; }
-
-.btn-row { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
-.hint-btn { background:none; border:1.5px solid #2f80ed; color:#2f80ed; padding:5px 14px; border-radius:20px; font-size:12.5px; cursor:pointer; font-weight:600; transition:all .2s; }
-.hint-btn:hover { background:#2f80ed; color:white; }
-.done-btn { background:none; border:1.5px solid #ccc; color:#888; padding:5px 14px; border-radius:20px; font-size:12.5px; cursor:pointer; font-weight:600; transition:all .2s; }
-.done-btn.done { background:#43a047; border-color:#43a047; color:white; }
-
-.hint { display:none; margin-top:10px; background:#e8f5e9; border-left:3px solid #43a047; padding:9px 13px; border-radius:0 8px 8px 0; font-size:13px; color:#2e7d32; }
-
-.reset-btn { margin-left:auto; background:none; border:1.5px solid #e0e0e0; color:#aaa; padding:5px 12px; border-radius:16px; font-size:12px; cursor:pointer; }
-.reset-btn:hover { border-color:#e74c3c; color:#e74c3c; }
-</style>
-</head>
-<body>
-
-<header>
-  <h1>🐍 Python Задачи</h1>
-  <span>justLearn. · Шохин Алимов</span>
-</header>
-
-<div class="score-bar">
-  ✅ Решено: <strong id="doneCount">0</strong> из <strong id="totalCount">0</strong>
-  &nbsp;|&nbsp;
-  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <button class="reset-btn" onclick="resetAll()">🗑 Сбросить прогресс</button>
-</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="show('vars',this)">📦 Переменные</div>
-  <div class="tab" onclick="show('types',this)">🔢 Типы данных</div>
-  <div class="tab" onclick="show('lists',this)">📋 Списки</div>
-  <div class="tab" onclick="show('loops',this)">🔄 Циклы</div>
-  <div class="tab" onclick="show('conds',this)">❓ Условия</div>
-  <div class="tab" onclick="show('funcs',this)">⚙️ Функции</div>
-</div>
-
-<!-- ═══ ПЕРЕМЕННЫЕ ═══ -->
-<div class="section active" id="vars">
-  <div class="section-title">📦 Переменные</div>
-  <div class="section-sub">Переменная — это коробка с именем. Ты кладёшь туда значение и потом используешь его.</div>
-
-  <div class="card" id="c1">
-    <div class="card-head"><div class="num">1</div><div class="card-title">Твоя карточка игрока</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Создай три переменные: <b>name</b> (твоё имя), <b>age</b> (твой возраст), <b>level</b> (уровень — поставь 1).</p>
-      <p>Выведи их в одной строке:</p>
-      <div class="example">Игрок: Алиса | Возраст: 12 | Уровень: 1</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h1')">💡 Подсказка</button>
-      <button class="done-btn" id="b1" onclick="markDone('c1','b1')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h1">print(f"Игрок: {name} | Возраст: {age} | Уровень: {level}")</div>
-  </div>
-
-  <div class="card" id="c2">
-    <div class="card-head"><div class="num">2</div><div class="card-title">Поменяй местами</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Есть две переменные: <b>a = 5</b> и <b>b = 10</b>.</p>
-      <p>Поменяй их значения местами — a стало 10, b стало 5. Выведи до и после.</p>
-      <p>🤔 Нужна ли тебе третья переменная-помощник?</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h2')">💡 Подсказка</button>
-      <button class="done-btn" id="b2" onclick="markDone('c2','b2')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h2">temp = a, a = b, b = temp. Или одной строкой: a, b = b, a</div>
-  </div>
-
-  <div class="card" id="c3">
-    <div class="card-head"><div class="num">3</div><div class="card-title">Магазин</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>У тебя <b>100 монет</b>. Купил меч за <b>35</b> и щит за <b>20</b>. Посчитай сколько осталось.</p>
-      <div class="example">Потрачено: 55 монет
-Осталось: 45 монет</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h3')">💡 Подсказка</button>
-      <button class="done-btn" id="b3" onclick="markDone('c3','b3')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h3">spent = sword + shield, left = coins - spent</div>
-  </div>
-
-  <div class="card" id="c4">
-    <div class="card-head"><div class="num">4</div><div class="card-title">Имя наоборот</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Попроси ввести имя через <b>input()</b>. Выведи его задом наперёд.</p>
-      <div class="example">Введи имя: Алиса
-Наоборот: асилА</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h4')">💡 Подсказка</button>
-      <button class="done-btn" id="b4" onclick="markDone('c4','b4')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h4">Строку переворачивает срез: name[::-1]</div>
-  </div>
-
-  <div class="card" id="c5">
-    <div class="card-head"><div class="num">5</div><div class="card-title">Площадь комнаты</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи ширину и длину комнаты. Посчитай и выведи площадь.</p>
-      <div class="example">Ширина: 4
-Длина: 5
-Площадь: 20 кв.м</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h5')">💡 Подсказка</button>
-      <button class="done-btn" id="b5" onclick="markDone('c5','b5')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h5">Не забудь int(input(...)) — иначе числа будут текстом</div>
-  </div>
-</div>
-
-<!-- ═══ ТИПЫ ДАННЫХ ═══ -->
-<div class="section" id="types">
-  <div class="section-title">🔢 Типы данных</div>
-  <div class="section-sub">int, float, str, bool — четыре главных типа. Важно знать какой тип у твоей переменной.</div>
-
-  <div class="card" id="c6">
-    <div class="card-head"><div class="num">6</div><div class="card-title">Угадай тип</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Создай 4 переменные разных типов: число, дробное, текст, True/False. Выведи каждую с type().</p>
-      <div class="example">42 → &lt;class 'int'&gt;
-3.14 → &lt;class 'float'&gt;</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h6')">💡 Подсказка</button>
-      <button class="done-btn" id="b6" onclick="markDone('c6','b6')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h6">print(x, type(x)) — выводит значение и тип одновременно</div>
-  </div>
-
-  <div class="card" id="c7">
-    <div class="card-head"><div class="num">7</div><div class="card-title">Сломанный калькулятор</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Вот сломанный код. Найди ошибку и исправь:</p>
-      <div class="example">a = input("Введи число: ")
-b = input("Введи ещё: ")
-print(a + b)</div>
-      <p style="margin-top:8px">При вводе 3 и 5 выводит 35 вместо 8. Почему? Исправь!</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h7')">💡 Подсказка</button>
-      <button class="done-btn" id="b7" onclick="markDone('c7','b7')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h7">input() всегда возвращает str. Оберни в int(): a = int(input(...))</div>
-  </div>
-
-  <div class="card" id="c8">
-    <div class="card-head"><div class="num">8</div><div class="card-title">Чётное или нет</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи число. Выведи <b>True</b> если чётное, <b>False</b> если нет — только bool результат.</p>
-      <div class="example">Введи число: 8
-Чётное: True</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h8')">💡 Подсказка</button>
-      <button class="done-btn" id="b8" onclick="markDone('c8','b8')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h8">n % 2 == 0 возвращает True или False — это и есть bool</div>
-  </div>
-
-  <div class="card" id="c9">
-    <div class="card-head"><div class="num">9</div><div class="card-title">Конвертер температуры</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Введи температуру в Цельсиях. Переведи в Фаренгейт. Формула: <b>F = C * 9/5 + 32</b></p>
-      <div class="example">Цельсий: 100
-Фаренгейт: 212.0</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h9')">💡 Подсказка</button>
-      <button class="done-btn" id="b9" onclick="markDone('c9','b9')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h9">float(input(...)) и f"{result:.1f}" для одного знака после запятой</div>
-  </div>
-
-  <div class="card" id="c10">
-    <div class="card-head"><div class="num">10</div><div class="card-title">Сколько секунд?</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи часы и минуты. Переведи всё в секунды.</p>
-      <div class="example">Часы: 1
-Минуты: 30
-Итого секунд: 5400</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h10')">💡 Подсказка</button>
-      <button class="done-btn" id="b10" onclick="markDone('c10','b10')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h10">seconds = hours * 3600 + minutes * 60</div>
-  </div>
-</div>
-
-<!-- ═══ СПИСКИ ═══ -->
-<div class="section" id="lists">
-  <div class="section-title">📋 Списки</div>
-  <div class="section-sub">Список хранит много значений сразу. Каждый элемент имеет свой номер — индекс — начиная с 0.</div>
-
-  <div class="card" id="c11">
-    <div class="card-head"><div class="num">11</div><div class="card-title">Инвентарь</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Создай список из 4 предметов. Выведи первый, последний и количество.</p>
-      <div class="example">Первый: меч
-Последний: зелье
-Всего: 4</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h11')">💡 Подсказка</button>
-      <button class="done-btn" id="b11" onclick="markDone('c11','b11')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h11">items[0] — первый, items[-1] — последний, len(items) — количество</div>
-  </div>
-
-  <div class="card" id="c12">
-    <div class="card-head"><div class="num">12</div><div class="card-title">Добавь и удали</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Список: <b>["яблоко", "банан", "груша"]</b></p>
-      <p>Добавь "манго" в конец. Удали "банан". Замени "яблоко" на "арбуз".</p>
-      <p>Выведи список после каждого изменения.</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h12')">💡 Подсказка</button>
-      <button class="done-btn" id="b12" onclick="markDone('c12','b12')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h12">append() добавляет, remove() удаляет, fruits[0] = "арбуз" меняет по индексу</div>
-  </div>
-
-  <div class="card" id="c13">
-    <div class="card-head"><div class="num">13</div><div class="card-title">Сумма очков</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Список: <b>[10, 25, 8, 30, 15, 22]</b></p>
-      <p>Найди и выведи: сумму, максимум, минимум и среднее.</p>
-      <div class="example">Сумма: 110 | Макс: 30 | Мин: 8 | Среднее: 18.33</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h13')">💡 Подсказка</button>
-      <button class="done-btn" id="b13" onclick="markDone('c13','b13')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h13">sum(), max(), min() — встроенные функции. Среднее = sum / len</div>
-  </div>
-
-  <div class="card" id="c14">
-    <div class="card-head"><div class="num">14</div><div class="card-title">Отсортируй</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Список: <b>["Вова", "Алиса", "Тимур", "Соня"]</b></p>
-      <p>Отсортируй по алфавиту на месте, выведи. Потом разверни в обратном порядке, выведи снова.</p>
-      <p>🤔 Что происходит с исходным списком при sort()?</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h14')">💡 Подсказка</button>
-      <button class="done-btn" id="b14" onclick="markDone('c14','b14')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h14">names.sort() сортирует на месте. names.reverse() разворачивает на месте. Оба меняют исходный список!</div>
-  </div>
-
-  <div class="card" id="c15">
-    <div class="card-head"><div class="num">15</div><div class="card-title">Найди элемент</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Список: <b>["слайм","скелет","дракон","слайм","зомби","слайм"]</b></p>
-      <p>Выведи: сколько раз встречается "слайм" и на каком индексе первый раз.</p>
-      <p>Проверь — есть ли "босс" в списке. Если нет — "Босс не найден".</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h15')">💡 Подсказка</button>
-      <button class="done-btn" id="b15" onclick="markDone('c15','b15')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h15">count() считает, index() находит позицию. Проверь "босс" in enemies перед index()</div>
-  </div>
-</div>
-
-<!-- ═══ ЦИКЛЫ ═══ -->
-<div class="section" id="loops">
-  <div class="section-title">🔄 Циклы</div>
-  <div class="section-sub">for проходит по списку, while повторяет пока условие верно, break останавливает цикл, continue пропускает шаг.</div>
-
-  <div class="card" id="c16">
-    <div class="card-head"><div class="num">16</div><div class="card-title">Выведи всех врагов</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Список: <b>["слайм","скелет","зомби","дракон"]</b>. Пройдись циклом for и выведи:</p>
-      <div class="example">Враг 1: слайм
-Враг 2: скелет
-Враг 3: зомби
-Враг 4: дракон</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h16')">💡 Подсказка</button>
-      <button class="done-btn" id="b16" onclick="markDone('c16','b16')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h16">for i, enemy in enumerate(enemies): print(f"Враг {i+1}: {enemy}")</div>
-  </div>
-
-  <div class="card" id="c17">
-    <div class="card-head"><div class="num">17</div><div class="card-title">Таблица умножения</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи число. Выведи таблицу умножения от 1 до 10.</p>
-      <div class="example">Введи число: 3
-3 x 1 = 3
-3 x 2 = 6
-...
-3 x 10 = 30</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h17')">💡 Подсказка</button>
-      <button class="done-btn" id="b17" onclick="markDone('c17','b17')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h17">for i in range(1, 11): print(f"{n} x {i} = {n*i}")</div>
-  </div>
-
-  <div class="card" id="c18">
-    <div class="card-head"><div class="num">18</div><div class="card-title">Только чётные</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Пройдись по числам от 1 до 20. Выведи только чётные и их сумму.</p>
-      <div class="example">2 4 6 8 10 12 14 16 18 20
-Сумма чётных: 110</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h18')">💡 Подсказка</button>
-      <button class="done-btn" id="b18" onclick="markDone('c18','b18')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h18">if n % 2 == 0 — чётное. Прибавляй к total внутри цикла</div>
-  </div>
-
-  <div class="card" id="c19">
-    <div class="card-head"><div class="num">19</div><div class="card-title">Обратный отсчёт (while)</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Используй <b>while</b>. Выведи числа от 10 до 1 по убыванию. В конце выведи "Пуск! 🚀"</p>
-      <div class="example">10 9 8 7 6 5 4 3 2 1
-Пуск! 🚀</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h19')">💡 Подсказка</button>
-      <button class="done-btn" id="b19" onclick="markDone('c19','b19')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h19">n = 10, while n > 0: print(n), n -= 1</div>
-  </div>
-
-  <div class="card" id="c20">
-    <div class="card-head"><div class="num">20</div><div class="card-title">Копилка (while)</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Копилка пустая. Каждый раз спрашивай сколько монет положить. Прибавляй к сумме.</p>
-      <p>Когда пользователь введёт 0 — остановись и выведи итоговую сумму.</p>
-      <div class="example">Положи монеты (0 = стоп): 10
-Положи монеты (0 = стоп): 25
-Положи монеты (0 = стоп): 0
-Итого в копилке: 35</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h20')">💡 Подсказка</button>
-      <button class="done-btn" id="b20" onclick="markDone('c20','b20')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h20">total = 0, while True: n = int(input(...)), if n == 0: break, total += n</div>
-  </div>
-
-  <div class="card" id="c21">
-    <div class="card-head"><div class="num">21</div><div class="card-title">Пароль (while)</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Правильный пароль: <b>"python123"</b>. Спрашивай пользователя пока не введёт правильно.</p>
-      <p>Когда угадал — выведи "Добро пожаловать! 🎉"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h21')">💡 Подсказка</button>
-      <button class="done-btn" id="b21" onclick="markDone('c21','b21')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h21">while True: p = input("Пароль: "), if p == "python123": print("..."), break</div>
-  </div>
-
-  <div class="card" id="c22">
-    <div class="card-head"><div class="num">22</div><div class="card-title">Жизни игрока (while)</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Игрок начинает с 5 жизнями. Каждый раз спрашивай: "Получил урон? (да/нет)"</p>
-      <p>Если "да" — уменьши жизни на 1, выведи сколько осталось. Когда 0 — "Игра окончена!"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h22')">💡 Подсказка</button>
-      <button class="done-btn" id="b22" onclick="markDone('c22','b22')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h22">while lives > 0: спрашивай, если "да" — lives -= 1. После цикла выведи "Игра окончена!"</div>
-  </div>
-
-  <div class="card" id="c23">
-    <div class="card-head"><div class="num">23</div><div class="card-title">Угадай число (while)</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Загадай: <b>secret = 7</b>. Спрашивай пока не угадают. Подсказывай — больше или меньше.</p>
-      <p>Когда угадал — выведи за сколько попыток.</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h23')">💡 Подсказка</button>
-      <button class="done-btn" id="b23" onclick="markDone('c23','b23')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h23">while True: guess = int(input(...)), if guess == secret: break. Считай attempts += 1</div>
-  </div>
-
-  <div class="card" id="c24">
-    <div class="card-head"><div class="num">24</div><div class="card-title">Пропусти нечётные (continue)</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Пройдись по числам от 1 до 15. Используй <b>continue</b> чтобы пропускать нечётные числа.</p>
-      <p>Выведи только чётные.</p>
-      <div class="example">2
-4
-6
-8
-10
-12
-14</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h24')">💡 Подсказка</button>
-      <button class="done-btn" id="b24" onclick="markDone('c24','b24')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h24">if n % 2 != 0: continue — пропускает нечётные и переходит к следующему</div>
-  </div>
-
-  <div class="card" id="c25">
-    <div class="card-head"><div class="num">25</div><div class="card-title">Найди врага и стоп (break)</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Список: <b>["слайм","зомби","дракон","скелет","босс","слайм"]</b></p>
-      <p>Пройдись по списку. Когда встретишь "дракон" — выведи "Внимание! Дракон на позиции N!" и останови цикл с <b>break</b>.</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h25')">💡 Подсказка</button>
-      <button class="done-btn" id="b25" onclick="markDone('c25','b25')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h25">for i, e in enumerate(enemies): if e == "дракон": print(f"...{i}"), break</div>
-  </div>
-
-  <div class="card" id="c26">
-    <div class="card-head"><div class="num">26</div><div class="card-title">Фильтр инвентаря (break + continue)</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Список: <b>["меч","зелье","яд","щит","яд","лук"]</b></p>
-      <p>Пройдись по списку. Пропускай "яд" через <b>continue</b>. Если найдёшь "щит" — выведи "Щит найден!" и останови через <b>break</b>. Остальные — выводи как "Предмет: ..."</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h26')">💡 Подсказка</button>
-      <button class="done-btn" id="b26" onclick="markDone('c26','b26')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h26">if item == "яд": continue. elif item == "щит": print("Щит найден!"), break. else: print(f"Предмет: {item}")</div>
-  </div>
-</div>
-
-<!-- ═══ УСЛОВИЯ ═══ -->
-<div class="section" id="conds">
-  <div class="section-title">❓ Условия</div>
-  <div class="section-sub">if, elif, else — программа принимает решения. Как светофор: зелёный — иди, красный — стой.</div>
-
-  <div class="card" id="c27">
-    <div class="card-head"><div class="num">27</div><div class="card-title">Оценка</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Введи оценку от 1 до 10. Выведи словесный результат:</p>
-      <p>9–10 → "Отлично!" | 7–8 → "Хорошо" | 5–6 → "Нормально" | меньше 5 → "Надо подтянуть"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h27')">💡 Подсказка</button>
-      <button class="done-btn" id="b27" onclick="markDone('c27','b27')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h27">if grade >= 9: ... elif grade >= 7: ... elif grade >= 5: ... else: ...</div>
-  </div>
-
-  <div class="card" id="c28">
-    <div class="card-head"><div class="num">28</div><div class="card-title">Вход в игру</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Попроси ввести логин и пароль. Правильные: <b>admin / 1234</b></p>
-      <p>Если оба верны → "Добро пожаловать!", иначе → "Неверный логин или пароль"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h28')">💡 Подсказка</button>
-      <button class="done-btn" id="b28" onclick="markDone('c28','b28')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h28">if login == "admin" and password == "1234": — оба условия через and</div>
-  </div>
-
-  <div class="card" id="c29">
-    <div class="card-head"><div class="num">29</div><div class="card-title">Максимум из трёх</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи три числа. Найди наибольшее только через if/elif/else — без max().</p>
-      <div class="example">Числа: 5 12 8
-Максимум: 12</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h29')">💡 Подсказка</button>
-      <button class="done-btn" id="b29" onclick="markDone('c29','b29')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h29">if a > b and a > c: max = a. elif b > c: max = b. else: max = c</div>
-  </div>
-
-  <div class="card" id="c30">
-    <div class="card-head"><div class="num">30</div><div class="card-title">Статус игрока</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Введи hp (0–100) и броню (да/нет).</p>
-      <p>hp == 0 → "Игра окончена" | hp > 70 + броня → "Непобедим!" | hp > 70 без брони → "Силён, но уязвим" | остальное → "Осторожно!"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h30')">💡 Подсказка</button>
-      <button class="done-btn" id="b30" onclick="markDone('c30','b30')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h30">Проверяй hp == 0 первым! Потом if hp > 70 and armor == "да": и т.д.</div>
-  </div>
-
-  <div class="card" id="c31">
-    <div class="card-head"><div class="num">31</div><div class="card-title">Проверка пароля</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Введи пароль. Проверь два условия: длина ≥ 8 И есть хотя бы одна цифра.</p>
-      <p>Оба выполнены → "Надёжный ✅" | только одно → скажи что не так | ни одного → "Очень слабый ❌"</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h31')">💡 Подсказка</button>
-      <button class="done-btn" id="b31" onclick="markDone('c31','b31')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h31">long_ok = len(p) >= 8, digit_ok = any(c.isdigit() for c in p). Проверяй все комбинации через if/elif</div>
-  </div>
-</div>
-
-<!-- ═══ ФУНКЦИИ ═══ -->
-<div class="section" id="funcs">
-  <div class="section-title">⚙️ Функции</div>
-  <div class="section-sub">Функция — это как рецепт. Написал один раз — используешь сколько угодно. def создаёт, return возвращает результат.</div>
-
-  <div class="card" id="c32">
-    <div class="card-head"><div class="num">32</div><div class="card-title">Привет по имени</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Напиши функцию <b>greet(name)</b> которая выводит "Привет, [имя]! 👋"</p>
-      <p>Вызови её 3 раза с разными именами.</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h32')">💡 Подсказка</button>
-      <button class="done-btn" id="b32" onclick="markDone('c32','b32')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h32">def greet(name): print(f"Привет, {name}! 👋")</div>
-  </div>
-
-  <div class="card" id="c33">
-    <div class="card-head"><div class="num">33</div><div class="card-title">Квадрат числа</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Напиши функцию <b>square(n)</b> которая <b>возвращает</b> число в квадрате.</p>
-      <p>Проверь: square(4) = 16, square(7) = 49</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h33')">💡 Подсказка</button>
-      <button class="done-btn" id="b33" onclick="markDone('c33','b33')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h33">def square(n): return n * n — используй return, не print!</div>
-  </div>
-
-  <div class="card" id="c34">
-    <div class="card-head"><div class="num">34</div><div class="card-title">Сложение двух чисел</div><div class="stars">⭐</div></div>
-    <div class="tag easy">Лёгкая</div>
-    <div class="desc">
-      <p>Напиши функцию <b>add(a, b)</b> которая возвращает сумму двух чисел.</p>
-      <p>Потом сохрани результат в переменную и выведи его.</p>
-      <div class="example">result = add(3, 5)
-print(result)  # 8</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h34')">💡 Подсказка</button>
-      <button class="done-btn" id="b34" onclick="markDone('c34','b34')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h34">def add(a, b): return a + b</div>
-  </div>
-
-  <div class="card" id="c35">
-    <div class="card-head"><div class="num">35</div><div class="card-title">print vs return</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Напиши две функции: <b>add_print(a,b)</b> с print и <b>add_return(a,b)</b> с return.</p>
-      <p>Сохрани результаты в r1 и r2. Что выведет каждая? Почему r1 будет None?</p>
-      <div class="example">r1 = add_print(3, 5)   # что выведет?
-r2 = add_return(3, 5)  # что выведет?
-print(r1)
-print(r2)</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h35')">💡 Подсказка</button>
-      <button class="done-btn" id="b35" onclick="markDone('c35','b35')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h35">print внутри функции ничего не возвращает — r1 будет None. return отдаёт значение наружу</div>
-  </div>
-
-  <div class="card" id="c36">
-    <div class="card-head"><div class="num">36</div><div class="card-title">Значение по умолчанию</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Напиши функцию <b>multiply(a, b=2)</b>. Если b не передан — умножает на 2.</p>
-      <div class="example">multiply(5)     # 10
-multiply(3, 4)  # 12
-multiply(7, 0)  # 0</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h36')">💡 Подсказка</button>
-      <button class="done-btn" id="b36" onclick="markDone('c36','b36')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h36">def multiply(a, b=2): return a * b — b=2 работает автоматически если не передали</div>
-  </div>
-
-  <div class="card" id="c37">
-    <div class="card-head"><div class="num">37</div><div class="card-title">Статус здоровья</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Напиши функцию <b>health_status(hp)</b> которая возвращает строку:</p>
-      <p>hp > 70 → "Живой 💪" | hp > 0 → "Опасность! ⚠️" | hp == 0 → "Мёртв 💀"</p>
-      <div class="example">print(health_status(100))  # Живой 💪
-print(health_status(30))   # Опасность! ⚠️
-print(health_status(0))    # Мёртв 💀</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h37')">💡 Подсказка</button>
-      <button class="done-btn" id="b37" onclick="markDone('c37','b37')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h37">Проверяй hp == 0 первым! Потом elif hp > 70. Каждая ветка делает return</div>
-  </div>
-
-  <div class="card" id="c38">
-    <div class="card-head"><div class="num">38</div><div class="card-title">Конвертер температуры</div><div class="stars">⭐⭐</div></div>
-    <div class="tag medium">Средняя</div>
-    <div class="desc">
-      <p>Напиши функцию <b>to_fahrenheit(c)</b>. Формула: F = C * 9/5 + 32</p>
-      <p>Проверь: to_fahrenheit(0) = 32.0, to_fahrenheit(100) = 212.0</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h38')">💡 Подсказка</button>
-      <button class="done-btn" id="b38" onclick="markDone('c38','b38')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h38">def to_fahrenheit(c): return c * 9/5 + 32</div>
-  </div>
-
-  <div class="card" id="c39">
-    <div class="card-head"><div class="num">39</div><div class="card-title">Урон с бронёй</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Напиши функцию <b>take_damage(hp, damage, armor=False)</b>.</p>
-      <p>Если armor=True — урон уменьшается вдвое. hp не может быть меньше 0. Верни оставшееся hp.</p>
-      <div class="example">take_damage(100, 20)        # 80
-take_damage(100, 20, True)  # 90
-take_damage(10, 50)         # 0</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h39')">💡 Подсказка</button>
-      <button class="done-btn" id="b39" onclick="markDone('c39','b39')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h39">if armor: damage //= 2. Потом return max(0, hp - damage)</div>
-  </div>
-
-  <div class="card" id="c40">
-    <div class="card-head"><div class="num">40</div><div class="card-title">Функция внутри функции</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Используй <b>health_status()</b> из задачи 37. Напиши функцию <b>player_info(name, hp, level)</b> которая выводит:</p>
-      <div class="example">Игрок: Алиса | Уровень: 5 | HP: 80 | Статус: Живой 💪</div>
-      <p>Статус бери через вызов health_status() внутри player_info()!</p>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h40')">💡 Подсказка</button>
-      <button class="done-btn" id="b40" onclick="markDone('c40','b40')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h40">status = health_status(hp) — вызов функции внутри функции. Потом f-строка со всеми данными</div>
-  </div>
-
-  <div class="card" id="c41">
-    <div class="card-head"><div class="num">41</div><div class="card-title">★ Калькулятор битвы</div><div class="stars">⭐⭐⭐</div></div>
-    <div class="tag hard">Сложная</div>
-    <div class="desc">
-      <p>Напиши функцию <b>battle(attacker, defender, crit=False)</b>.</p>
-      <p>attacker и defender — словари с "name" и "attack"/"hp".</p>
-      <p>Если crit=True — урон удваивается. Верни строку с результатом удара.</p>
-      <div class="example">hero  = {"name":"Алиса", "attack":15}
-enemy = {"name":"Слайм", "hp":40}
-
-print(battle(hero, enemy))
-# Алиса атакует Слайма на 15 урона!</div>
-    </div>
-    <div class="btn-row">
-      <button class="hint-btn" onclick="toggleHint('h41')">💡 Подсказка</button>
-      <button class="done-btn" id="b41" onclick="markDone('c41','b41')">✓ Готово</button>
-    </div>
-    <div class="hint" id="h41">dmg = attacker["attack"] * (2 if crit else 1). Верни f-строку с именами и уроном</div>
-  </div>
-</div>
-
-<script>
-const STORAGE_KEY = 'justlearn_python_tasks';
-
-function loadProgress() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return {};
-    return JSON.parse(saved);
-  } catch(e) { return {}; }
-}
-
-function saveProgress(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
-}
-
-function show(id, el) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  el.classList.add('active');
-}
-
-function toggleHint(id) {
-  const h = document.getElementById(id);
-  h.style.display = h.style.display === 'block' ? 'none' : 'block';
-}
-
-function markDone(cardId, btnId) {
-  const card = document.getElementById(cardId);
-  const btn  = document.getElementById(btnId);
-  const isDone = btn.classList.contains('done');
-  const progress = loadProgress();
-
-  if (isDone) {
-    btn.classList.remove('done');
-    btn.textContent = '✓ Готово';
-    card.classList.remove('completed');
-    delete progress[cardId];
-  } else {
-    btn.classList.add('done');
-    btn.textContent = '✅ Сделано!';
-    card.classList.add('completed');
-    progress[cardId] = true;
-  }
-  saveProgress(progress);
-  updateCount();
-}
-
-function updateCount() {
-  const done  = document.querySelectorAll('.done-btn.done').length;
-  const total = document.querySelectorAll('.done-btn').length;
-  document.getElementById('doneCount').textContent = done;
-  document.getElementById('totalCount').textContent = total;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-}
-
-function resetAll() {
-  if (!confirm('Сбросить весь прогресс?')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  document.querySelectorAll('.done-btn').forEach(btn => {
-    btn.classList.remove('done');
-    btn.textContent = '✓ Готово';
-  });
-  document.querySelectorAll('.card').forEach(c => c.classList.remove('completed'));
-  updateCount();
-}
-
-// Restore progress on load
-(function init() {
-  const progress = loadProgress();
-  Object.keys(progress).forEach(cardId => {
-    const btnId = 'b' + cardId.replace('c','');
-    const card = document.getElementById(cardId);
-    const btn  = document.getElementById(btnId);
-    if (card && btn) {
-      card.classList.add('completed');
-      btn.classList.add('done');
-      btn.textContent = '✅ Сделано!';
-    }
-  });
-  updateCount();
-})();
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Задачи — shohin's Academy.</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fa;
+        color: #1a1a2e;
+        min-height: 100vh;
+      }
+
+      header {
+        background: #2f80ed;
+        color: white;
+        padding: 20px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 12px rgba(47, 128, 237, 0.3);
+      }
+      header h1 {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      header span {
+        font-size: 13px;
+        opacity: 0.85;
+      }
+
+      .score-bar {
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 10px 28px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+        color: #555;
+        flex-wrap: wrap;
+      }
+      .score-bar strong {
+        color: #2f80ed;
+        font-size: 18px;
+      }
+      .progress-wrap {
+        flex: 1;
+        min-width: 160px;
+        height: 8px;
+        background: #e8ecf0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #2f80ed, #43a047);
+        border-radius: 4px;
+        transition: width 0.4s;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 6px;
+        padding: 20px 28px 0;
+        flex-wrap: wrap;
+      }
+      .tab {
+        padding: 7px 16px;
+        border-radius: 20px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: #888;
+        transition: all 0.2s;
+      }
+      .tab.active,
+      .tab:hover {
+        background: #2f80ed;
+        color: white;
+        border-color: #2f80ed;
+      }
+
+      .section {
+        display: none;
+        padding: 20px 28px 60px;
+        max-width: 860px;
+      }
+      .section.active {
+        display: block;
+      }
+      .section-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #2f80ed;
+        margin-bottom: 4px;
+      }
+      .section-sub {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 14px;
+        border: 1px solid #e8ecf0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.2s;
+      }
+      .card:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      .card.completed {
+        border-color: #43a047;
+        background: #f9fff9;
+      }
+
+      .card-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .num {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #2f80ed;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .card-title {
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .stars {
+        color: #f0c040;
+        font-size: 13px;
+        margin-left: auto;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .tag.easy {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .tag.medium {
+        background: #fff3e0;
+        color: #e65100;
+      }
+      .tag.hard {
+        background: #fce4ec;
+        color: #c62828;
+      }
+
+      .desc {
+        font-size: 14.5px;
+        line-height: 1.7;
+        color: #333;
+      }
+      .desc p {
+        margin-bottom: 7px;
+      }
+      .desc ul {
+        margin-left: 20px;
+        margin-bottom: 8px;
+      }
+      .desc li {
+        margin-bottom: 4px;
+      }
+
+      .example {
+        background: #f4f4f4;
+        border-radius: 8px;
+        padding: 9px 13px;
+        font-family: "Courier New", monospace;
+        font-size: 12.5px;
+        color: #333;
+        margin-top: 8px;
+        white-space: pre-wrap;
+      }
+
+      .btn-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .hint-btn {
+        background: none;
+        border: 1.5px solid #2f80ed;
+        color: #2f80ed;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12.5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .hint-btn:hover {
+        background: #2f80ed;
+        color: white;
+      }
+      .done-btn {
+        background: none;
+        border: 1.5px solid #ccc;
+        color: #888;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12.5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .done-btn.done {
+        background: #43a047;
+        border-color: #43a047;
+        color: white;
+      }
+
+      .hint {
+        display: none;
+        margin-top: 10px;
+        background: #e8f5e9;
+        border-left: 3px solid #43a047;
+        padding: 9px 13px;
+        border-radius: 0 8px 8px 0;
+        font-size: 13px;
+        color: #2e7d32;
+        line-height: 1.6;
+      }
+
+      .reset-btn {
+        margin-left: auto;
+        background: none;
+        border: 1.5px solid #e0e0e0;
+        color: #aaa;
+        padding: 5px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .reset-btn:hover {
+        border-color: #e74c3c;
+        color: #e74c3c;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🐍 Python Задачи</h1>
+      <span>shohin's Academy. · Шохин Алимов</span>
+    </header>
+
+    <div class="score-bar">
+      ✅ Решено: <strong id="doneCount">0</strong> из
+      <strong id="totalCount">0</strong>
+      &nbsp;|&nbsp;
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <button class="reset-btn" onclick="resetAll()">
+        🗑 Сбросить прогресс
+      </button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="show('vars', this)">📦 Переменные</div>
+      <div class="tab" onclick="show('types', this)">🔢 Типы данных</div>
+      <div class="tab" onclick="show('lists', this)">📋 Списки</div>
+      <div class="tab" onclick="show('loops', this)">🔄 Циклы</div>
+      <div class="tab" onclick="show('conds', this)">❓ Условия</div>
+      <div class="tab" onclick="show('funcs', this)">⚙️ Функции</div>
+    </div>
+
+    <!-- ═══ ПЕРЕМЕННЫЕ ═══ -->
+    <div class="section active" id="vars">
+      <div class="section-title">📦 Переменные</div>
+      <div class="section-sub">
+        Переменная — это коробка с именем. Ты кладёшь туда значение и потом
+        используешь его.
+      </div>
+
+      <div class="card" id="c1">
+        <div class="card-head">
+          <div class="num">1</div>
+          <div class="card-title">Твоя карточка игрока</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Создай три переменные: <b>name</b> (твоё имя), <b>age</b> (твой
+            возраст), <b>level</b> (уровень — поставь 1).
+          </p>
+          <p>Выведи их в одной строке:</p>
+          <div class="example">Игрок: Алиса | Возраст: 12 | Уровень: 1</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h1')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b1" onclick="markDone('c1', 'b1')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h1">
+          print(f"Игрок: {name} | Возраст: {age} | Уровень: {level}")
+        </div>
+      </div>
+
+      <div class="card" id="c2">
+        <div class="card-head">
+          <div class="num">2</div>
+          <div class="card-title">Поменяй местами</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Есть две переменные: <b>a = 5</b> и <b>b = 10</b>.</p>
+          <p>
+            Поменяй их значения местами — a стало 10, b стало 5. Выведи до и
+            после.
+          </p>
+          <p>🤔 Нужна ли тебе третья переменная-помощник?</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h2')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b2" onclick="markDone('c2', 'b2')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h2">
+          temp = a, a = b, b = temp. Или одной строкой: a, b = b, a
+        </div>
+      </div>
+
+      <div class="card" id="c3">
+        <div class="card-head">
+          <div class="num">3</div>
+          <div class="card-title">Магазин</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            У тебя <b>100 монет</b>. Купил меч за <b>35</b> и щит за <b>20</b>.
+            Посчитай сколько осталось.
+          </p>
+          <div class="example">Потрачено: 55 монет Осталось: 45 монет</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h3')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b3" onclick="markDone('c3', 'b3')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h3">
+          spent = sword + shield, left = coins - spent
+        </div>
+      </div>
+
+      <div class="card" id="c4">
+        <div class="card-head">
+          <div class="num">4</div>
+          <div class="card-title">Имя наоборот</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>
+            Попроси ввести имя через <b>input()</b>. Выведи его задом наперёд.
+          </p>
+          <div class="example">Введи имя: Алиса Наоборот: асилА</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h4')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b4" onclick="markDone('c4', 'b4')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h4">Строку переворачивает срез: name[::-1]</div>
+      </div>
+
+      <div class="card" id="c5">
+        <div class="card-head">
+          <div class="num">5</div>
+          <div class="card-title">Площадь комнаты</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Введи ширину и длину комнаты. Посчитай и выведи площадь.</p>
+          <div class="example">Ширина: 4 Длина: 5 Площадь: 20 кв.м</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h5')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b5" onclick="markDone('c5', 'b5')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h5">
+          Не забудь int(input(...)) — иначе числа будут текстом
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ТИПЫ ДАННЫХ ═══ -->
+    <div class="section" id="types">
+      <div class="section-title">🔢 Типы данных</div>
+      <div class="section-sub">
+        int, float, str, bool — четыре главных типа. Важно знать какой тип у
+        твоей переменной.
+      </div>
+
+      <div class="card" id="c6">
+        <div class="card-head">
+          <div class="num">6</div>
+          <div class="card-title">Угадай тип</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Создай 4 переменные разных типов: число, дробное, текст, True/False.
+            Выведи каждую с type().
+          </p>
+          <div class="example">
+            42 → &lt;class 'int'&gt; 3.14 → &lt;class 'float'&gt;
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h6')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b6" onclick="markDone('c6', 'b6')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h6">
+          print(x, type(x)) — выводит значение и тип одновременно
+        </div>
+      </div>
+
+      <div class="card" id="c7">
+        <div class="card-head">
+          <div class="num">7</div>
+          <div class="card-title">Сломанный калькулятор</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Вот сломанный код. Найди ошибку и исправь:</p>
+          <div class="example">
+            a = input("Введи число: ") b = input("Введи ещё: ") print(a + b)
+          </div>
+          <p style="margin-top: 8px">
+            При вводе 3 и 5 выводит 35 вместо 8. Почему? Исправь!
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h7')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b7" onclick="markDone('c7', 'b7')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h7">
+          input() всегда возвращает str. Оберни в int(): a = int(input(...))
+        </div>
+      </div>
+
+      <div class="card" id="c8">
+        <div class="card-head">
+          <div class="num">8</div>
+          <div class="card-title">Чётное или нет</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Введи число. Выведи <b>True</b> если чётное, <b>False</b> если нет —
+            только bool результат.
+          </p>
+          <div class="example">Введи число: 8 Чётное: True</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h8')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b8" onclick="markDone('c8', 'b8')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h8">
+          n % 2 == 0 возвращает True или False — это и есть bool
+        </div>
+      </div>
+
+      <div class="card" id="c9">
+        <div class="card-head">
+          <div class="num">9</div>
+          <div class="card-title">Конвертер температуры</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>
+            Введи температуру в Цельсиях. Переведи в Фаренгейт. Формула:
+            <b>F = C * 9/5 + 32</b>
+          </p>
+          <div class="example">Цельсий: 100 Фаренгейт: 212.0</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h9')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b9" onclick="markDone('c9', 'b9')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h9">
+          float(input(...)) и f"{result:.1f}" для одного знака после запятой
+        </div>
+      </div>
+
+      <div class="card" id="c10">
+        <div class="card-head">
+          <div class="num">10</div>
+          <div class="card-title">Сколько секунд?</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Введи часы и минуты. Переведи всё в секунды.</p>
+          <div class="example">Часы: 1 Минуты: 30 Итого секунд: 5400</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h10')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b10" onclick="markDone('c10', 'b10')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h10">seconds = hours * 3600 + minutes * 60</div>
+      </div>
+    </div>
+
+    <!-- ═══ СПИСКИ ═══ -->
+    <div class="section" id="lists">
+      <div class="section-title">📋 Списки</div>
+      <div class="section-sub">
+        Список хранит много значений сразу. Каждый элемент имеет свой номер —
+        индекс — начиная с 0.
+      </div>
+
+      <div class="card" id="c11">
+        <div class="card-head">
+          <div class="num">11</div>
+          <div class="card-title">Инвентарь</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Создай список из 4 предметов. Выведи первый, последний и количество.
+          </p>
+          <div class="example">Первый: меч Последний: зелье Всего: 4</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h11')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b11" onclick="markDone('c11', 'b11')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h11">
+          items[0] — первый, items[-1] — последний, len(items) — количество
+        </div>
+      </div>
+
+      <div class="card" id="c12">
+        <div class="card-head">
+          <div class="num">12</div>
+          <div class="card-title">Добавь и удали</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Список: <b>["яблоко", "банан", "груша"]</b></p>
+          <p>
+            Добавь "манго" в конец. Удали "банан". Замени "яблоко" на "арбуз".
+          </p>
+          <p>Выведи список после каждого изменения.</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h12')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b12" onclick="markDone('c12', 'b12')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h12">
+          append() добавляет, remove() удаляет, fruits[0] = "арбуз" меняет по
+          индексу
+        </div>
+      </div>
+
+      <div class="card" id="c13">
+        <div class="card-head">
+          <div class="num">13</div>
+          <div class="card-title">Сумма очков</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Список: <b>[10, 25, 8, 30, 15, 22]</b></p>
+          <p>Найди и выведи: сумму, максимум, минимум и среднее.</p>
+          <div class="example">
+            Сумма: 110 | Макс: 30 | Мин: 8 | Среднее: 18.33
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h13')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b13" onclick="markDone('c13', 'b13')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h13">
+          sum(), max(), min() — встроенные функции. Среднее = sum / len
+        </div>
+      </div>
+
+      <div class="card" id="c14">
+        <div class="card-head">
+          <div class="num">14</div>
+          <div class="card-title">Отсортируй</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Список: <b>["Вова", "Алиса", "Тимур", "Соня"]</b></p>
+          <p>
+            Отсортируй по алфавиту на месте, выведи. Потом разверни в обратном
+            порядке, выведи снова.
+          </p>
+          <p>🤔 Что происходит с исходным списком при sort()?</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h14')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b14" onclick="markDone('c14', 'b14')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h14">
+          names.sort() сортирует на месте. names.reverse() разворачивает на
+          месте. Оба меняют исходный список!
+        </div>
+      </div>
+
+      <div class="card" id="c15">
+        <div class="card-head">
+          <div class="num">15</div>
+          <div class="card-title">Найди элемент</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>
+            Список: <b>["слайм","скелет","дракон","слайм","зомби","слайм"]</b>
+          </p>
+          <p>
+            Выведи: сколько раз встречается "слайм" и на каком индексе первый
+            раз.
+          </p>
+          <p>Проверь — есть ли "босс" в списке. Если нет — "Босс не найден".</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h15')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b15" onclick="markDone('c15', 'b15')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h15">
+          count() считает, index() находит позицию. Проверь "босс" in enemies
+          перед index()
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ЦИКЛЫ ═══ -->
+    <div class="section" id="loops">
+      <div class="section-title">🔄 Циклы</div>
+      <div class="section-sub">
+        for проходит по списку, while повторяет пока условие верно, break
+        останавливает цикл, continue пропускает шаг.
+      </div>
+
+      <div class="card" id="c16">
+        <div class="card-head">
+          <div class="num">16</div>
+          <div class="card-title">Выведи всех врагов</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Список: <b>["слайм","скелет","зомби","дракон"]</b>. Пройдись циклом
+            for и выведи:
+          </p>
+          <div class="example">
+            Враг 1: слайм Враг 2: скелет Враг 3: зомби Враг 4: дракон
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h16')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b16" onclick="markDone('c16', 'b16')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h16">
+          for i, enemy in enumerate(enemies): print(f"Враг {i+1}: {enemy}")
+        </div>
+      </div>
+
+      <div class="card" id="c17">
+        <div class="card-head">
+          <div class="num">17</div>
+          <div class="card-title">Таблица умножения</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Введи число. Выведи таблицу умножения от 1 до 10.</p>
+          <div class="example">
+            Введи число: 3 3 x 1 = 3 3 x 2 = 6 ... 3 x 10 = 30
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h17')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b17" onclick="markDone('c17', 'b17')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h17">
+          for i in range(1, 11): print(f"{n} x {i} = {n*i}")
+        </div>
+      </div>
+
+      <div class="card" id="c18">
+        <div class="card-head">
+          <div class="num">18</div>
+          <div class="card-title">Только чётные</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Пройдись по числам от 1 до 20. Выведи только чётные и их сумму.</p>
+          <div class="example">2 4 6 8 10 12 14 16 18 20 Сумма чётных: 110</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h18')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b18" onclick="markDone('c18', 'b18')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h18">
+          if n % 2 == 0 — чётное. Прибавляй к total внутри цикла
+        </div>
+      </div>
+
+      <div class="card" id="c19">
+        <div class="card-head">
+          <div class="num">19</div>
+          <div class="card-title">Обратный отсчёт (while)</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Используй <b>while</b>. Выведи числа от 10 до 1 по убыванию. В конце
+            выведи "Пуск! 🚀"
+          </p>
+          <div class="example">10 9 8 7 6 5 4 3 2 1 Пуск! 🚀</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h19')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b19" onclick="markDone('c19', 'b19')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h19">n = 10, while n > 0: print(n), n -= 1</div>
+      </div>
+
+      <div class="card" id="c20">
+        <div class="card-head">
+          <div class="num">20</div>
+          <div class="card-title">Копилка (while)</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Копилка пустая. Каждый раз спрашивай сколько монет положить.
+            Прибавляй к сумме.
+          </p>
+          <p>
+            Когда пользователь введёт 0 — остановись и выведи итоговую сумму.
+          </p>
+          <div class="example">
+            Положи монеты (0 = стоп): 10 Положи монеты (0 = стоп): 25 Положи
+            монеты (0 = стоп): 0 Итого в копилке: 35
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h20')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b20" onclick="markDone('c20', 'b20')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h20">
+          total = 0, while True: n = int(input(...)), if n == 0: break, total +=
+          n
+        </div>
+      </div>
+
+      <div class="card" id="c21">
+        <div class="card-head">
+          <div class="num">21</div>
+          <div class="card-title">Пароль (while)</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Правильный пароль: <b>"python123"</b>. Спрашивай пользователя пока
+            не введёт правильно.
+          </p>
+          <p>Когда угадал — выведи "Добро пожаловать! 🎉"</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h21')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b21" onclick="markDone('c21', 'b21')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h21">
+          while True: p = input("Пароль: "), if p == "python123": print("..."),
+          break
+        </div>
+      </div>
+
+      <div class="card" id="c22">
+        <div class="card-head">
+          <div class="num">22</div>
+          <div class="card-title">Жизни игрока (while)</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Игрок начинает с 5 жизнями. Каждый раз спрашивай: "Получил урон?
+            (да/нет)"
+          </p>
+          <p>
+            Если "да" — уменьши жизни на 1, выведи сколько осталось. Когда 0 —
+            "Игра окончена!"
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h22')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b22" onclick="markDone('c22', 'b22')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h22">
+          while lives > 0: спрашивай, если "да" — lives -= 1. После цикла выведи
+          "Игра окончена!"
+        </div>
+      </div>
+
+      <div class="card" id="c23">
+        <div class="card-head">
+          <div class="num">23</div>
+          <div class="card-title">Угадай число (while)</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Загадай: <b>secret = 7</b>. Спрашивай пока не угадают. Подсказывай —
+            больше или меньше.
+          </p>
+          <p>Когда угадал — выведи за сколько попыток.</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h23')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b23" onclick="markDone('c23', 'b23')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h23">
+          while True: guess = int(input(...)), if guess == secret: break. Считай
+          attempts += 1
+        </div>
+      </div>
+
+      <div class="card" id="c24">
+        <div class="card-head">
+          <div class="num">24</div>
+          <div class="card-title">Пропусти нечётные (continue)</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Пройдись по числам от 1 до 15. Используй <b>continue</b> чтобы
+            пропускать нечётные числа.
+          </p>
+          <p>Выведи только чётные.</p>
+          <div class="example">2 4 6 8 10 12 14</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h24')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b24" onclick="markDone('c24', 'b24')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h24">
+          if n % 2 != 0: continue — пропускает нечётные и переходит к следующему
+        </div>
+      </div>
+
+      <div class="card" id="c25">
+        <div class="card-head">
+          <div class="num">25</div>
+          <div class="card-title">Найди врага и стоп (break)</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Список: <b>["слайм","зомби","дракон","скелет","босс","слайм"]</b>
+          </p>
+          <p>
+            Пройдись по списку. Когда встретишь "дракон" — выведи "Внимание!
+            Дракон на позиции N!" и останови цикл с <b>break</b>.
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h25')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b25" onclick="markDone('c25', 'b25')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h25">
+          for i, e in enumerate(enemies): if e == "дракон": print(f"...{i}"),
+          break
+        </div>
+      </div>
+
+      <div class="card" id="c26">
+        <div class="card-head">
+          <div class="num">26</div>
+          <div class="card-title">Фильтр инвентаря (break + continue)</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>Список: <b>["меч","зелье","яд","щит","яд","лук"]</b></p>
+          <p>
+            Пройдись по списку. Пропускай "яд" через <b>continue</b>. Если
+            найдёшь "щит" — выведи "Щит найден!" и останови через <b>break</b>.
+            Остальные — выводи как "Предмет: ..."
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h26')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b26" onclick="markDone('c26', 'b26')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h26">
+          if item == "яд": continue. elif item == "щит": print("Щит найден!"),
+          break. else: print(f"Предмет: {item}")
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ УСЛОВИЯ ═══ -->
+    <div class="section" id="conds">
+      <div class="section-title">❓ Условия</div>
+      <div class="section-sub">
+        if, elif, else — программа принимает решения. Как светофор: зелёный —
+        иди, красный — стой.
+      </div>
+
+      <div class="card" id="c27">
+        <div class="card-head">
+          <div class="num">27</div>
+          <div class="card-title">Оценка</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>Введи оценку от 1 до 10. Выведи словесный результат:</p>
+          <p>
+            9–10 → "Отлично!" | 7–8 → "Хорошо" | 5–6 → "Нормально" | меньше 5 →
+            "Надо подтянуть"
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h27')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b27" onclick="markDone('c27', 'b27')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h27">
+          if grade >= 9: ... elif grade >= 7: ... elif grade >= 5: ... else: ...
+        </div>
+      </div>
+
+      <div class="card" id="c28">
+        <div class="card-head">
+          <div class="num">28</div>
+          <div class="card-title">Вход в игру</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Попроси ввести логин и пароль. Правильные: <b>admin / 1234</b></p>
+          <p>
+            Если оба верны → "Добро пожаловать!", иначе → "Неверный логин или
+            пароль"
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h28')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b28" onclick="markDone('c28', 'b28')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h28">
+          if login == "admin" and password == "1234": — оба условия через and
+        </div>
+      </div>
+
+      <div class="card" id="c29">
+        <div class="card-head">
+          <div class="num">29</div>
+          <div class="card-title">Максимум из трёх</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Введи три числа. Найди наибольшее только через if/elif/else — без
+            max().
+          </p>
+          <div class="example">Числа: 5 12 8 Максимум: 12</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h29')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b29" onclick="markDone('c29', 'b29')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h29">
+          if a > b and a > c: max = a. elif b > c: max = b. else: max = c
+        </div>
+      </div>
+
+      <div class="card" id="c30">
+        <div class="card-head">
+          <div class="num">30</div>
+          <div class="card-title">Статус игрока</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>Введи hp (0–100) и броню (да/нет).</p>
+          <p>
+            hp == 0 → "Игра окончена" | hp > 70 + броня → "Непобедим!" | hp > 70
+            без брони → "Силён, но уязвим" | остальное → "Осторожно!"
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h30')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b30" onclick="markDone('c30', 'b30')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h30">
+          Проверяй hp == 0 первым! Потом if hp > 70 and armor == "да": и т.д.
+        </div>
+      </div>
+
+      <div class="card" id="c31">
+        <div class="card-head">
+          <div class="num">31</div>
+          <div class="card-title">Проверка пароля</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>
+            Введи пароль. Проверь два условия: длина ≥ 8 И есть хотя бы одна
+            цифра.
+          </p>
+          <p>
+            Оба выполнены → "Надёжный ✅" | только одно → скажи что не так | ни
+            одного → "Очень слабый ❌"
+          </p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h31')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b31" onclick="markDone('c31', 'b31')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h31">
+          long_ok = len(p) >= 8, digit_ok = any(c.isdigit() for c in p).
+          Проверяй все комбинации через if/elif
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ФУНКЦИИ ═══ -->
+    <div class="section" id="funcs">
+      <div class="section-title">⚙️ Функции</div>
+      <div class="section-sub">
+        Функция — это как рецепт. Написал один раз — используешь сколько угодно.
+        def создаёт, return возвращает результат.
+      </div>
+
+      <div class="card" id="c32">
+        <div class="card-head">
+          <div class="num">32</div>
+          <div class="card-title">Привет по имени</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>greet(name)</b> которая выводит "Привет, [имя]!
+            👋"
+          </p>
+          <p>Вызови её 3 раза с разными именами.</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h32')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b32" onclick="markDone('c32', 'b32')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h32">
+          def greet(name): print(f"Привет, {name}! 👋")
+        </div>
+      </div>
+
+      <div class="card" id="c33">
+        <div class="card-head">
+          <div class="num">33</div>
+          <div class="card-title">Квадрат числа</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>square(n)</b> которая <b>возвращает</b> число в
+            квадрате.
+          </p>
+          <p>Проверь: square(4) = 16, square(7) = 49</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h33')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b33" onclick="markDone('c33', 'b33')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h33">
+          def square(n): return n * n — используй return, не print!
+        </div>
+      </div>
+
+      <div class="card" id="c34">
+        <div class="card-head">
+          <div class="num">34</div>
+          <div class="card-title">Сложение двух чисел</div>
+          <div class="stars">⭐</div>
+        </div>
+        <div class="tag easy">Лёгкая</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>add(a, b)</b> которая возвращает сумму двух чисел.
+          </p>
+          <p>Потом сохрани результат в переменную и выведи его.</p>
+          <div class="example">result = add(3, 5) print(result) # 8</div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h34')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b34" onclick="markDone('c34', 'b34')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h34">def add(a, b): return a + b</div>
+      </div>
+
+      <div class="card" id="c35">
+        <div class="card-head">
+          <div class="num">35</div>
+          <div class="card-title">print vs return</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Напиши две функции: <b>add_print(a,b)</b> с print и
+            <b>add_return(a,b)</b> с return.
+          </p>
+          <p>
+            Сохрани результаты в r1 и r2. Что выведет каждая? Почему r1 будет
+            None?
+          </p>
+          <div class="example">
+            r1 = add_print(3, 5) # что выведет? r2 = add_return(3, 5) # что
+            выведет? print(r1) print(r2)
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h35')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b35" onclick="markDone('c35', 'b35')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h35">
+          print внутри функции ничего не возвращает — r1 будет None. return
+          отдаёт значение наружу
+        </div>
+      </div>
+
+      <div class="card" id="c36">
+        <div class="card-head">
+          <div class="num">36</div>
+          <div class="card-title">Значение по умолчанию</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>multiply(a, b=2)</b>. Если b не передан — умножает
+            на 2.
+          </p>
+          <div class="example">
+            multiply(5) # 10 multiply(3, 4) # 12 multiply(7, 0) # 0
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h36')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b36" onclick="markDone('c36', 'b36')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h36">
+          def multiply(a, b=2): return a * b — b=2 работает автоматически если
+          не передали
+        </div>
+      </div>
+
+      <div class="card" id="c37">
+        <div class="card-head">
+          <div class="num">37</div>
+          <div class="card-title">Статус здоровья</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>health_status(hp)</b> которая возвращает строку:
+          </p>
+          <p>
+            hp > 70 → "Живой 💪" | hp > 0 → "Опасность! ⚠️" | hp == 0 → "Мёртв
+            💀"
+          </p>
+          <div class="example">
+            print(health_status(100)) # Живой 💪 print(health_status(30)) #
+            Опасность! ⚠️ print(health_status(0)) # Мёртв 💀
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h37')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b37" onclick="markDone('c37', 'b37')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h37">
+          Проверяй hp == 0 первым! Потом elif hp > 70. Каждая ветка делает
+          return
+        </div>
+      </div>
+
+      <div class="card" id="c38">
+        <div class="card-head">
+          <div class="num">38</div>
+          <div class="card-title">Конвертер температуры</div>
+          <div class="stars">⭐⭐</div>
+        </div>
+        <div class="tag medium">Средняя</div>
+        <div class="desc">
+          <p>
+            Напиши функцию <b>to_fahrenheit(c)</b>. Формула: F = C * 9/5 + 32
+          </p>
+          <p>Проверь: to_fahrenheit(0) = 32.0, to_fahrenheit(100) = 212.0</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h38')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b38" onclick="markDone('c38', 'b38')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h38">
+          def to_fahrenheit(c): return c * 9/5 + 32
+        </div>
+      </div>
+
+      <div class="card" id="c39">
+        <div class="card-head">
+          <div class="num">39</div>
+          <div class="card-title">Урон с бронёй</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>Напиши функцию <b>take_damage(hp, damage, armor=False)</b>.</p>
+          <p>
+            Если armor=True — урон уменьшается вдвое. hp не может быть меньше 0.
+            Верни оставшееся hp.
+          </p>
+          <div class="example">
+            take_damage(100, 20) # 80 take_damage(100, 20, True) # 90
+            take_damage(10, 50) # 0
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h39')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b39" onclick="markDone('c39', 'b39')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h39">
+          if armor: damage //= 2. Потом return max(0, hp - damage)
+        </div>
+      </div>
+
+      <div class="card" id="c40">
+        <div class="card-head">
+          <div class="num">40</div>
+          <div class="card-title">Функция внутри функции</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>
+            Используй <b>health_status()</b> из задачи 37. Напиши функцию
+            <b>player_info(name, hp, level)</b> которая выводит:
+          </p>
+          <div class="example">
+            Игрок: Алиса | Уровень: 5 | HP: 80 | Статус: Живой 💪
+          </div>
+          <p>Статус бери через вызов health_status() внутри player_info()!</p>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h40')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b40" onclick="markDone('c40', 'b40')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h40">
+          status = health_status(hp) — вызов функции внутри функции. Потом
+          f-строка со всеми данными
+        </div>
+      </div>
+
+      <div class="card" id="c41">
+        <div class="card-head">
+          <div class="num">41</div>
+          <div class="card-title">★ Калькулятор битвы</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>Напиши функцию <b>battle(attacker, defender, crit=False)</b>.</p>
+          <p>attacker и defender — словари с "name" и "attack"/"hp".</p>
+          <p>
+            Если crit=True — урон удваивается. Верни строку с результатом удара.
+          </p>
+          <div class="example">
+            hero = {"name":"Алиса", "attack":15} enemy = {"name":"Слайм",
+            "hp":40} print(battle(hero, enemy)) # Алиса атакует Слайма на 15
+            урона!
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h41')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b41" onclick="markDone('c41', 'b41')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h41">
+          dmg = attacker["attack"] * (2 if crit else 1). Верни f-строку с
+          именами и уроном
+        </div>
+      </div>
+
+      <div class="card" id="c42">
+        <div class="card-head">
+          <div class="num">42</div>
+          <div class="card-title">🎮 Система врагов в игре</div>
+          <div class="stars">⭐⭐⭐</div>
+        </div>
+        <div class="tag hard">Сложная</div>
+        <div class="desc">
+          <p>Дан список врагов, где каждый элемент — это <b>[имя, HP]</b>:</p>
+          <div class="example">
+            enemies = [ ["Слайм", 30], ["Скелет", 50], ["Зомби", 40], ["Дракон",
+            100], ["Гоблин", 20] ]
+          </div>
+
+          <p style="margin-top: 10px">Напиши 4 функции:</p>
+          <ul>
+            <li>
+              <b>show_enemies(enemies)</b> — выводит список с номерами (1. Слайм
+              — HP: 30);
+            </li>
+            <li>
+              <b>total_hp(enemies)</b> — возвращает суммарный HP всех врагов;
+            </li>
+            <li>
+              <b>find_boss(enemies)</b> — возвращает имя врага с максимальным
+              HP;
+            </li>
+            <li>
+              <b>remove_weak(enemies, min_hp)</b> — возвращает новый список
+              врагов, у которых HP ≥ min_hp.
+            </li>
+          </ul>
+
+          <div class="example">
+            <b>Пример вызова:</b> show_enemies(enemies) print("Всего HP:",
+            total_hp(enemies)) print("Самый сильный:", find_boss(enemies))
+            strong = remove_weak(enemies, 40) print("\nСильные враги:")
+            show_enemies(strong)
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="hint-btn" onclick="toggleHint('h42')">
+            💡 Подсказка
+          </button>
+          <button class="done-btn" id="b42" onclick="markDone('c42', 'b42')">
+            ✓ Готово
+          </button>
+        </div>
+        <div class="hint" id="h42">
+          • <b>show_enemies</b>: используй enumerate(enemies, 1)<br />
+          • <b>total_hp</b>: суммируй enemy[1] в цикле или через sum()<br />
+          • <b>find_boss</b>: max(enemies, key=lambda x: x[1])[0]<br />
+          • <b>remove_weak</b>: фильтруй с помощью спискового включения [e for e
+          in enemies if e[1] >= min_hp]
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "justlearn_python_tasks";
+
+      function loadProgress() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return {};
+          return JSON.parse(saved);
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveProgress(data) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }
+
+      function show(id, el) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        el.classList.add("active");
+      }
+
+      function toggleHint(id) {
+        const h = document.getElementById(id);
+        h.style.display = h.style.display === "block" ? "none" : "block";
+      }
+
+      function markDone(cardId, btnId) {
+        const card = document.getElementById(cardId);
+        const btn = document.getElementById(btnId);
+        const isDone = btn.classList.contains("done");
+        const progress = loadProgress();
+
+        if (isDone) {
+          btn.classList.remove("done");
+          btn.textContent = "✓ Готово";
+          card.classList.remove("completed");
+          delete progress[cardId];
+        } else {
+          btn.classList.add("done");
+          btn.textContent = "✅ Сделано!";
+          card.classList.add("completed");
+          progress[cardId] = true;
+        }
+        saveProgress(progress);
+        updateCount();
+      }
+
+      function updateCount() {
+        const done = document.querySelectorAll(".done-btn.done").length;
+        const total = document.querySelectorAll(".done-btn").length;
+        document.getElementById("doneCount").textContent = done;
+        document.getElementById("totalCount").textContent = total;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        document.getElementById("progressFill").style.width = pct + "%";
+      }
+
+      function resetAll() {
+        if (!confirm("Сбросить весь прогресс?")) return;
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll(".done-btn").forEach((btn) => {
+          btn.classList.remove("done");
+          btn.textContent = "✓ Готово";
+        });
+        document
+          .querySelectorAll(".card")
+          .forEach((c) => c.classList.remove("completed"));
+        updateCount();
+      }
+
+      // Restore progress on load
+      (function init() {
+        const progress = loadProgress();
+        Object.keys(progress).forEach((cardId) => {
+          const btnId = "b" + cardId.replace("c", "");
+          const card = document.getElementById(cardId);
+          const btn = document.getElementById(btnId);
+          if (card && btn) {
+            card.classList.add("completed");
+            btn.classList.add("done");
+            btn.textContent = "✅ Сделано!";
+          }
+        });
+        updateCount();
+      })();
+    </script>
+  </body>
 </html>
